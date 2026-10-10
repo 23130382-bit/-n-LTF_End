@@ -1,0 +1,66 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+    display: flex;
+    justify-self: center;
+    gap: 25px;
+    background-color: #04fd95;
+}
+
+
+#manhinhchinh {
+    display: grid;
+    grid-template-columns: repeat(10, 25px);
+
+    grid-template-rows: repeat(20, 25px);
+    width: fit-content;
+    background-color: #00fa9a;
+    padding: 5px;
+}
+
+.o_vuong {
+    background-color: white;
+    border: 1px solid #000;
+    width: 100%;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-self: center;
+
+}
+
+.header h1 {
+
+    font-size: 20px;
+    color: #000;
+}
+
+.manhinhphu {
+
+    height: 100px;
+    width: 100px;
+    background-color: rgb(30, 0, 255);
+
+
+}
+
+.menugame {
+    padding: 20px;
+
+}
+
+.vat_the {
+    background-color: red;
+}
+
+.da_co_dinh {
+    background-color: #ff9800;
+    box-shadow: 0 0 3px #ff9800;
+}
