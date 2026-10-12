@@ -52,12 +52,6 @@ function taoKhoiMoi() {
     // tạo vị trí mà khối xuất hiện
     vitrihang = 0;
     vitricot = Math.floor((soCot - khoiHienTai[0].length) / 2); //chia khoảng cách , căn đều hai bên.
-    if (kiemTraVaCham(0, 0)) {
-        alert('Game Over!');
-        clearInterval(timerID);
-        return false;
-    }
-    return true;
 }
 
 function vitrikhoivuong(tuongtac) {
@@ -176,7 +170,27 @@ function anhang() {
     }
 }
 
+const nutBatDau = document.getElementById('nutBatDau');
+const nutKetThuc = document.getElementById('nutKetThuc');
+nutBatDau.addEventListener('click', function () {
+    resetMap();
 
+    if (taoKhoiMoi()) {
+        veKhoi();
+    }
+    if (timerID !== null) {
+        clearInterval(timertd);
+    }
+    timerID = setInterval(rotxuong, 500);
+    nutBatDau.disabled = true;
+    nutKetThuc.disabled = false;
+});
+nutKetThuc.addEventListener('click', function () {
+    clearInterval(timerID);
+    timerID = null;
+    nutBatDau.disabled = false;
+    nutKetThuc.disabled = true;
+});
 document.addEventListener('keydown', function (suKien) {
     switch (suKien.key) {
         case 'ArrowLeft':
@@ -201,6 +215,3 @@ document.addEventListener('keydown', function (suKien) {
             break;
     }
 });
-taoKhoiMoi();
-veKhoi();
-setInterval(rotxuong, 500);
