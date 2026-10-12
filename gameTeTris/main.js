@@ -174,7 +174,6 @@ const nutBatDau = document.getElementById('nutBatDau');
 const nutKetThuc = document.getElementById('nutKetThuc');
 nutBatDau.addEventListener('click', function () {
     resetMap();
-
     if (taoKhoiMoi()) {
         veKhoi();
     }

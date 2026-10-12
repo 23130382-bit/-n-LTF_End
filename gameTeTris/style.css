@@ -1,17 +1,18 @@
 * {
-    box-sizing: border-box;
     margin: 0;
-    padding: 0;
-
 }
 
 body {
     display: flex;
+    flex-direction: column;
     justify-self: center;
-    gap: 25px;
     background-color: #04fd95;
 }
 
+.game {
+    display: flex;
+
+}
 
 #manhinhchinh {
     display: grid;
@@ -51,11 +52,6 @@ body {
 
 }
 
-.menugame {
-    padding: 20px;
-
-}
-
 .vat_the {
     background-color: red;
 }
@@ -63,4 +59,36 @@ body {
 .da_co_dinh {
     background-color: #ff9800;
     box-shadow: 0 0 3px #ff9800;
+}
+
+.capdo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 10px;
+}
+
+.capdo .level {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 5px;
+    padding: 10px 10px;
+}
+
+.thongtingame {
+    padding: 10px 30px;
+}
+
+.thongtingame .dieu_khien {
+    display: flex;
+    gap: 10px;
+}
+
+.thongtingame .dieu_khien .nutdieukhien button {
+    height: 70px;
+    width: 70px;
 }
