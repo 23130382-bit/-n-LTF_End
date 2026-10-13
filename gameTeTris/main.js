@@ -35,10 +35,21 @@ const DANH_SACH_KHOI = [
         [1, 0],
         [1, 1]
     ],
+    // khối L
+    [
+        [0, 1],
+        [0, 1],
+        [1, 1]
+    ],
     // khối Z
     [
         [1, 1, 0],
         [0, 1, 1]
+    ],
+    // khối Z
+    [
+        [0, 1, 1],
+        [1, 1, 0]
     ]
 ];
 let khoiHienTai = [];
@@ -91,6 +102,8 @@ function resetMap() {
     danhSachOVuong.forEach(oVuong => {
         oVuong.classList.remove('vat_the', 'da_co_dinh');
     });
+    tongdiem = 0;
+    diemso.innerText = tongdiem;
 }
 function xoayKhoi() {
     const khoiMoi = khoiHienTai[0].map((_, colIndex) =>
@@ -117,7 +130,6 @@ function rotxuong() {
     }
 
 }
-
 function kiemTraVaCham(nhichHang, nhichCot, khoiKiemTra = khoiHienTai) {
     for (let i = 0; i < khoiKiemTra.length; i++) {
         for (let j = 0; j < khoiKiemTra[i].length; j++) {
@@ -140,7 +152,14 @@ function kiemTraVaCham(nhichHang, nhichCot, khoiKiemTra = khoiHienTai) {
     }
     return false;
 }
+
+
+// xử lí ăn hàng
+const diemso = document.getElementById('diemhientai');
+let tongdiem = 0;
 function anhang() {
+
+    //đọc vị trí các ô đã được cố định trong map
     for (let hang = soHang - 1; hang >= 0; hang--) {
         let hangDaFull = true;
         for (let cot = 0; cot < soCot; cot++) {
@@ -150,6 +169,7 @@ function anhang() {
                 break;
             }
         }
+        //đọc các ô xem có full hàng ko    
         if (hangDaFull) {
             for (let r = hang; r > 0; r--) {
                 for (let c = 0; c < soCot; c++) {
@@ -165,11 +185,14 @@ function anhang() {
             for (let c = 0; c < soCot; c++) {
                 danhSachOVuong[c].classList.remove('da_co_dinh');
             }
+            tongdiem += 10;
+            diemso.innerText = tongdiem;
             hang++;
         }
     }
 }
 
+//bắt đầu màn chơi
 const nutBatDau = document.getElementById('nutBatDau');
 const nutKetThuc = document.getElementById('nutKetThuc');
 nutBatDau.addEventListener('click', function () {
@@ -190,6 +213,9 @@ nutKetThuc.addEventListener('click', function () {
     nutBatDau.disabled = false;
     nutKetThuc.disabled = true;
 });
+
+
+// xử lí các nút bấm
 document.addEventListener('keydown', function (suKien) {
     switch (suKien.key) {
         case 'ArrowLeft':
