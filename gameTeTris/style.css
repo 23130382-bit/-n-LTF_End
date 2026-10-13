@@ -70,13 +70,11 @@ body {
 
 .vat_the {
     opacity: 1;
-    background-color: red;
 }
 
 .da_co_dinh {
     opacity: 1;
-    background-color: #ff9800;
-    box-shadow: 0 0 3px #ff9800;
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.8);
 }
 
 .capdo {
@@ -126,4 +124,32 @@ body {
 .diemso {
     padding: 10px 10px;
     background-color: aqua;
+}
+
+.mau_tim {
+    background-color: purple;
+}
+
+.mau_xanh_nhat {
+    background-color: cyan;
+}
+
+.mau_vang {
+    background-color: gold;
+}
+
+.mau_cam {
+    background-color: orange;
+}
+
+.mau_xanh_dam {
+    background-color: blue;
+}
+
+.mau_xanh_la {
+    background-color: green;
+}
+
+.mau_do {
+    background-color: red;
 }

@@ -52,6 +52,15 @@ const DANH_SACH_KHOI = [
         [1, 1, 0]
     ]
 ];
+const DANH_SACH_MAU = [
+    'mau_tim',
+    'mau_xanh_nhat',
+    'mau_vang',
+    'mau_cam',
+    'mau_xanh_dam',
+    'mau_xanh_la',
+    'mau_do'
+];
 let khoiHienTai = [];
 let vitrihang = 0;
 let vitricot = 3;
@@ -60,9 +69,11 @@ function taoKhoiMoi() {
     const indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
     // truyền vào cho nó 1 khối
     khoiHienTai = DANH_SACH_KHOI[indexNgauNhien];
+    mauHienTai = DANH_SACH_MAU[indexNgauNhien];
     // tạo vị trí mà khối xuất hiện
     vitrihang = 0;
     vitricot = Math.floor((soCot - khoiHienTai[0].length) / 2); //chia khoảng cách , căn đều hai bên.
+    return true;
 }
 
 function vitrikhoivuong(tuongtac) {
@@ -81,14 +92,13 @@ function vitrikhoivuong(tuongtac) {
 //tạo màu cho khối vào hình
 function veKhoi() {
     vitrikhoivuong((index) => {
-        danhSachOVuong[index].classList.add('vat_the');
+        danhSachOVuong[index].classList.add('vat_the', mauHienTai);
     });
 }
-
 // mục đích của việc xóa là xóa vị trí hịnh tại của ô 1
 function xoaKhoi() {
     vitrikhoivuong((index) => {
-        danhSachOVuong[index].classList.remove('vat_the');
+        danhSachOVuong[index].classList.remove('vat_the', mauHienTai);
     });
 }
 //in màu cố định lại
@@ -97,13 +107,6 @@ function codinhkhoi() {
         danhSachOVuong[index].classList.remove('vat_the');
         danhSachOVuong[index].classList.add('da_co_dinh');
     });
-}
-function resetMap() {
-    danhSachOVuong.forEach(oVuong => {
-        oVuong.classList.remove('vat_the', 'da_co_dinh');
-    });
-    tongdiem = 0;
-    diemso.innerText = tongdiem;
 }
 function xoayKhoi() {
     const khoiMoi = khoiHienTai[0].map((_, colIndex) =>
@@ -176,14 +179,14 @@ function anhang() {
                     let indexHienTai = r * soCot + c;
                     let indexTren = (r - 1) * soCot + c;
                     if (danhSachOVuong[indexTren].classList.contains('da_co_dinh')) {
-                        danhSachOVuong[indexHienTai].classList.add('da_co_dinh');
+                        danhSachOVuong[indexHienTai].className = danhSachOVuong[indexTren].className;
                     } else {
-                        danhSachOVuong[indexHienTai].classList.remove('da_co_dinh');
+                        danhSachOVuong[indexHienTai].className = 'o_vuong';
                     }
                 }
             }
             for (let c = 0; c < soCot; c++) {
-                danhSachOVuong[c].classList.remove('da_co_dinh');
+                danhSachOVuong[c].className = 'o_vuong';
             }
             tongdiem += 10;
             diemso.innerText = tongdiem;
@@ -191,7 +194,13 @@ function anhang() {
         }
     }
 }
-
+function resetMap() {
+    danhSachOVuong.forEach(oVuong => {
+        oVuong.className = 'o_vuong';
+    });
+    tongdiem = 0;
+    diemso.innerText = tongdiem;
+}
 //bắt đầu màn chơi
 const nutBatDau = document.getElementById('nutBatDau');
 const nutKetThuc = document.getElementById('nutKetThuc');
@@ -201,7 +210,7 @@ nutBatDau.addEventListener('click', function () {
         veKhoi();
     }
     if (timerID !== null) {
-        clearInterval(timertd);
+        clearInterval(timerID);
     }
     timerID = setInterval(rotxuong, 500);
     nutBatDau.disabled = true;
