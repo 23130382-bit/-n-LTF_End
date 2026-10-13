@@ -6,40 +6,50 @@ body {
     display: flex;
     flex-direction: column;
     justify-self: center;
-    background-color: #04fd95;
+
+    background: #000;
+}
+
+.nen_chinh {
+    width: 900px;
+    height: 100%;
+
 }
 
 .game {
     display: flex;
+    background-image: url('/-n-LTF_End/gameTeTris/bp39965tupa31.png');
+    background-size: 100%;
 
+    background-position: 300px center;
 }
 
 #manhinhchinh {
     display: grid;
     grid-template-columns: repeat(10, 25px);
-
     grid-template-rows: repeat(20, 25px);
     width: fit-content;
-    background-color: #00fa9a;
     padding: 5px;
 }
 
 .o_vuong {
     background-color: white;
     border: 1px solid #000;
+    opacity: 0.1;
     width: 100%;
     height: 100%;
 }
 
 .header {
     display: flex;
-    justify-self: center;
+    justify-content: center;
+    background: #00fa9a;
 
 }
 
 .header h1 {
 
-    font-size: 20px;
+    font-size: 25px;
     color: #000;
 }
 
@@ -52,11 +62,19 @@ body {
 
 }
 
+.menuphu {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
 .vat_the {
+    opacity: 1;
     background-color: red;
 }
 
 .da_co_dinh {
+    opacity: 1;
     background-color: #ff9800;
     box-shadow: 0 0 3px #ff9800;
 }
@@ -80,7 +98,10 @@ body {
 }
 
 .thongtingame {
+    display: flex;
     padding: 10px 30px;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .thongtingame .dieu_khien {
@@ -91,4 +112,18 @@ body {
 .thongtingame .dieu_khien .nutdieukhien button {
     height: 70px;
     width: 70px;
+}
+
+.capdo span {
+    width: 70px;
+    height: 30px;
+    display: flex;
+    background-color: aqua;
+    align-items: center;
+    justify-content: center;
+}
+
+.diemso {
+    padding: 10px 10px;
+    background-color: aqua;
 }
