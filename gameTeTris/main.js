@@ -67,6 +67,7 @@ let vitricot = 3;
 function taoKhoiMoi() {
     // random khối trong mảng
     const indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
+    chiSoKhoiHienTai = indexNgauNhien;
     // truyền vào cho nó 1 khối
     khoiHienTai = DANH_SACH_KHOI[indexNgauNhien];
     mauHienTai = DANH_SACH_MAU[indexNgauNhien];
@@ -384,10 +385,51 @@ function xoaytheotg() {
     }
     batDauXoay();
 }
+// logic lv 3
+function doiKhoiHienTai() {
+    let indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
+
+    while (indexNgauNhien === chiSoKhoiHienTai) {
+        indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
+    }
+
+    let khoiMoi = DANH_SACH_KHOI[indexNgauNhien];
+    if (kiemTraVaCham(0, 0, khoiMoi)) {
+        return;
+    }
+    xoaKhoi();
+    khoiHienTai = khoiMoi;
+    mauHienTai = DANH_SACH_MAU[indexNgauNhien];
+    chiSoKhoiHienTai = indexNgauNhien;
+    veKhoi();
+}
+function doiKhoiTheoTG() {
+    let thoiGianDoi = 5000;
+
+    clearInterval(timerDoiKhoi);
+
+    timerDoiKhoi = setInterval(function () {
+        if (dangChoi && levelHienTai === 3) {
+            doiKhoiHienTai();
+        }
+    }, thoiGianDoi);
+}
+// logic lv 4
+
+// logic lv 5 
+
+// logic lv 6
+
+// logic lv 7
+
+
+
 // chuyển cấp độ 
 function apDungCoCheLevel() {
     //kết thúc hàm xoay theo thời gian 
     dungXoayTheoTG();
+    clearInterval(timerDoiKhoi);
+    timerDoiKhoi = null;
     switch (levelHienTai) {
 
         case 1:
@@ -397,6 +439,7 @@ function apDungCoCheLevel() {
             xoaytheotg();
             break;
         case 3:
+            doiKhoiTheoTG();
             break;
 
         case 4:
