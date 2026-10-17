@@ -13,14 +13,12 @@ body {
 .nen_chinh {
     width: 900px;
     height: 100%;
-
 }
 
 .game {
     display: flex;
     background-image: url('/-n-LTF_End/gameTeTris/bp39965tupa31.png');
     background-size: 100%;
-
     background-position: 300px center;
 }
 
@@ -30,6 +28,7 @@ body {
     grid-template-rows: repeat(20, 25px);
     width: fit-content;
     padding: 5px;
+    background-color: white;
 }
 
 .o_vuong {
@@ -54,12 +53,27 @@ body {
 }
 
 .manhinhphu {
-
     height: 100px;
     width: 100px;
-    background-color: rgb(30, 0, 255);
+    background-color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.khoi_xem_truoc {
+    display: flex;
+    flex-direction: column;
+}
 
+.hang_xem_truoc {
+    display: flex;
+}
+
+.o_vuong_nho {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .menuphu {
@@ -121,35 +135,69 @@ body {
     justify-content: center;
 }
 
+.huongdan {
+    background-color: aqua;
+    padding: 10px 10px;
+}
+
+.huongdan a {
+    text-decoration: none;
+    color: #000;
+}
+
 .diemso {
     padding: 10px 10px;
     background-color: aqua;
 }
 
 .mau_tim {
-    background-color: purple;
+    background-color: #B56CFF;
 }
 
 .mau_xanh_nhat {
-    background-color: cyan;
+    background-color: #38D9F5;
 }
 
 .mau_vang {
-    background-color: gold;
+    background-color: #FFD166;
 }
 
 .mau_cam {
-    background-color: orange;
+    background-color: #FF9F43;
 }
 
 .mau_xanh_dam {
-    background-color: blue;
+    background-color: #4D96FF;
 }
 
 .mau_xanh_la {
-    background-color: green;
+    background-color: #4ADE80;
 }
 
 .mau_do {
-    background-color: red;
+    background-color: #FF5C8A;
+}
+
+.huongdan {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 400px;
+    background: white;
+    padding: 20px;
+    z-index: 100;
+    border-radius: 10px;
+}
+
+.huongdan.hien_thi {
+    display: block;
+}
+
+.huongdan iframe {
+    width: 100%;
+    height: 85%;
+    border: none;
 }

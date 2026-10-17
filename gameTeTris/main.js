@@ -75,7 +75,6 @@ function taoKhoiMoi() {
     vitricot = Math.floor((soCot - khoiHienTai[0].length) / 2); //chia khoảng cách , căn đều hai bên.
     return true;
 }
-
 function vitrikhoivuong(tuongtac) {
     //chạy vòng lặp trong khối
     for (let i = 0; i < khoiHienTai.length; i++) {
@@ -109,14 +108,29 @@ function codinhkhoi() {
     });
 }
 function xoayKhoi() {
-    const khoiMoi = khoiHienTai[0].map((_, colIndex) =>
-        khoiHienTai.map(row => row[colIndex]).reverse()
-    );
+    let khoiMoi = [];
+    let soHangKhoi = khoiHienTai.length;
+    let soCotKhoi = khoiHienTai[0].length;
+    for (let j = 0; j < soCotKhoi; j++) {
+        let hangMoi = [];
 
-    if (!kiemTraVaCham(0, 0, khoiMoi)) {
-        xoaKhoi();
-        khoiHienTai = khoiMoi;
-        veKhoi();
+        for (let i = soHangKhoi - 1; i >= 0; i--) {
+            hangMoi.push(khoiHienTai[i][j]);
+        }
+        khoiMoi.push(hangMoi);
+    }
+    let danhSachDichCot = [0, -1, 1, -2, 2, -3, 3];
+    for (let k = 0; k < danhSachDichCot.length; k++) {
+        let dichCot = danhSachDichCot[k];
+        if (!kiemTraVaCham(0, dichCot, khoiMoi)) {
+            xoaKhoi();
+
+            khoiHienTai = khoiMoi;
+            vitricot += dichCot;
+
+            veKhoi();
+            return;
+        }
     }
 }
 function rotxuong() {
@@ -128,6 +142,14 @@ function rotxuong() {
         codinhkhoi();
         anhang();
         if (taoKhoiMoi()) {
+            if (kiemTraVaCham(0, 0)) {
+                clearInterval(timerID);
+                timerID = null;
+                alert("Game Over! Điểm của bạn là: " + tongdiem);
+                nutBatDau.disabled = false;
+                nutKetThuc.disabled = true;
+                return;
+            }
             veKhoi();
         }
     }
@@ -204,29 +226,54 @@ function resetMap() {
 //bắt đầu màn chơi
 const nutBatDau = document.getElementById('nutBatDau');
 const nutKetThuc = document.getElementById('nutKetThuc');
-nutBatDau.addEventListener('click', function () {
+//khai báo thêm 2 biến là lv và trang thái
+let levelHienTai = 1;
+let dangChoi = false;
+function batDauGame() {
+    //load lại map
     resetMap();
+    //bắt đầu tạo khối
     if (taoKhoiMoi()) {
         veKhoi();
     }
+    //xóa tg cũ
     if (timerID !== null) {
         clearInterval(timerID);
     }
+    //chuyển trang thái
+    dangChoi = true;
     timerID = setInterval(rotxuong, 500);
+    //đóng nút bắt đầu và hiện nút kết thúc
     nutBatDau.disabled = true;
     nutKetThuc.disabled = false;
-});
-nutKetThuc.addEventListener('click', function () {
-    clearInterval(timerID);
-    timerID = null;
-    nutBatDau.disabled = false;
-    nutKetThuc.disabled = true;
+    // áp dụng lv
+    apDungCoCheLevel();
+}
+nutBatDau.addEventListener('click', function () {
+    batDauGame();
 });
 
+function dungGame() {
+    // cập nhật
+    dangChoi = false;
+    nutBatDau.disabled = false;
+    nutKetThuc.disabled = true;
+    clearInterval(timerID);
+    clearInterval(timerXoay);
+    timerID = null;
+    timerXoay = null;
+
+}
+
+nutKetThuc.addEventListener('click', function () {
+    dungGame();
+});
 
 // xử lí các nút bấm
 document.addEventListener('keydown', function (suKien) {
+    if (!dangChoi) return;
     switch (suKien.key) {
+        //kiểm tra
         case 'ArrowLeft':
             if (!kiemTraVaCham(0, -1)) {
                 xoaKhoi();
@@ -249,3 +296,119 @@ document.addEventListener('keydown', function (suKien) {
             break;
     }
 });
+//khai báo nút hướng dẫn
+const khungHuongDan = document.getElementById('khungHuongDan');
+const nutMoHuongDan = document.getElementById('nutMoHuongDan');
+const nutDongHuongDan = document.getElementById('nutDongHuongDan');
+//ifame trong trang hướng dẫn
+const iframe = khungHuongDan.querySelector('iframe');
+nutMoHuongDan.addEventListener('click', function () {
+    iframe.src = 'huongdan.html';
+    khungHuongDan.classList.add('hien_thi');
+});
+//xử lí nút
+nutMoHuongDan.addEventListener('click', function () {
+    khungHuongDan.classList.add('hien_thi');
+});
+
+nutDongHuongDan.addEventListener('click', function () {
+    khungHuongDan.classList.remove('hien_thi');
+});
+//lấy danh sách lv
+const danhSachNutLevel = document.querySelectorAll('.level');
+// bắt lấy cấp độ hiện tại
+function chonLevel(level) {
+    //trong lv đang có
+    if (level < 1 || level > 7) return;
+    //kết thuc game ngay
+    dungGame();
+    //cập nhật lại lv
+    levelHienTai = level;
+    //hiện thị
+    iframe.src = 'huongdan.html#level' + level;
+    khungHuongDan.classList.add('hien_thi');
+}
+
+
+danhSachNutLevel.forEach(function (nut) {
+    nut.addEventListener('click', function () {
+        chonLevel(Number(nut.dataset.level));
+    });
+});
+
+
+// logic lv 2
+let timerXoay = null;  //thoi gian khối xoay
+let timerChuKy = null; //bao nhiêu lần xoay trong 1 khoang thoi gian
+let trangThaiXoay = false; // trang thái 
+//dùng xoay
+function dungXoayTheoTG() {
+    //dừng
+    clearInterval(timerXoay);
+    // hủy thời gian
+    clearTimeout(timerChuKy);
+    //cập nhật lại
+    timerXoay = null;
+    timerChuKy = null;
+    trangThaiXoay = false;
+}
+function xoaytheotg() {
+
+    let thoigianxoay = 7000; // xét thời gian xoay trong khoảng bao nhiêu s
+    let thoigiannghi = 15000; // xét thời gian nghỉ
+    let vantocxoay = 250; // xét giời gian xoay
+    // logic
+    function batDauXoay() {
+        // xét lv hiện tại có phải lv 2 ko
+        if (!dangChoi || levelHienTai !== 2) return;
+        // cập nhật
+        trangThaiXoay = true;
+        timerXoay = setInterval(function () {
+            // kiểm tra trạng thái
+            if (dangChoi && trangThaiXoay && levelHienTai === 2) {
+                xoayKhoi();
+            }
+        }, vantocxoay);
+
+        // sau 7s thì dừng
+        timerChuKy = setTimeout(function () {
+            //cật nhật
+            clearInterval(timerXoay);
+            timerXoay = null;
+            trangThaiXoay = false;
+            timerChuKy = setTimeout(function () {
+                batDauXoay();
+            }, thoigiannghi);
+
+        }, thoigianxoay);
+    }
+    batDauXoay();
+}
+// chuyển cấp độ 
+function apDungCoCheLevel() {
+    //kết thúc hàm xoay theo thời gian 
+    dungXoayTheoTG();
+    switch (levelHienTai) {
+
+        case 1:
+            break;
+
+        case 2:
+            xoaytheotg();
+            break;
+        case 3:
+            break;
+
+        case 4:
+            break;
+
+        case 5:
+            break;
+
+        case 6:
+            break;
+
+        case 7:
+            break;
+    }
+}

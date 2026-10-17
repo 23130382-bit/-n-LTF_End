@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hướng dẫn chơi Tetris</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 15px;
+        padding-bottom: 300px;
+        background-color: white;
+        color: black;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      h3 {
+        color: #008b8b;
+      }
+
+      p {
+        line-height: 1.6;
+      }
+
+      a {
+        color: #008b8b;
+        text-decoration: none;
+        margin-right: 10px;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .danhsachlevel {
+        margin: 20px 0;
+      }
+
+      .noidunglevel {
+        margin-top: 30px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Game TETRIS</h2>
+
+    <h3>1.mục tiêu cần làm</h3>
+    <p>xếp full 10 ô để nhận điểm</p>
+
+    <h3>2.gameplay</h3>
+    <p>← : dịch qua trái</p>
+    <p>→ : dịch qua phải</p>
+    <p>↓ : đẩy nhanh xuống/p></p>
+    <p>↑ : xoay khối</p>
+
+    <h3>3. cách hoạt động</h3>
+    <p>chọn cấp độ</p>
+    <p>
+      mỗi cấp độ là một cơ chế khác nhau,bổ sung luật sau khi bắt đầu chơi màn
+      đó
+    </p>
+    <p>bấm nút bắt đầu</p>
+    <p>di chuyển các khối để hoàn thành mục tiêu</p>
+
+    <h3>4.tính điểm</h3>
+    <p>mỗi hàng ăn đc tính 10đ</p>
+
+    <h3>5.kết thúc</h3>
+    <p>
+      trò chơi kết thúc khi bạn không còn thể đưa khối gạch vào nữa. bạn có thể
+      bấm nút để kết thúc màn chơi
+    </p>
+    <hr />
+    <div class="noidunglevel" id="level1">
+      <h2>Màn 1:</h2>
+      <h3>Luật Chơi vòng này</h3>
+      <p>cách chơi cơ bản</p>
+    </div>
+    <div class="noidunglevel" id="level2">
+      <h2>Màn 2:</h2>
+
+      <h3>Luật chơi</h3>
+      <p>Các khối sẽ xoay trong 7s</p>
+      <p>Sau 7s khối sẽ ngường xoay</p>
+      <p>Sau 15 kể từ lúc ngường nó sẽ tiếp tục xoay tiếp</p>
+    </div>
+    <div class="noidunglevel" id="level3">
+      <h2>Màn 3</h2>
+      <h3></h3>
+      <p></p>
+    </div>
+    <div class="noidunglevel" id="level4">
+      <h2>Màn 4</h2>
+      <h3></h3>
+      <p></p>
+    </div>
+    <div class="noidunglevel" id="level5">
+      <h2>Màn 5</h2>
+      <h3></h3>
+      <p></p>
+    </div>
+    <div class="noidunglevel" id="level6">
+      <h2>Màn 6</h2>
+      <h3></h3>
+      <p></p>
+    </div>
+    <div class="noidunglevel" id="level7">
+      <h2></h2>
+      <h3></h3>
+      <p></p>
+    </div>
+  </body>
+</html>
