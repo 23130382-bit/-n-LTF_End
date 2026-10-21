@@ -204,25 +204,34 @@ body {
     box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.65);
 }
 
-.thoigian {
-    padding: 10px;
-    background-color: #1e293b;
+#thongBaoLevel {
+    width: 100%;
+    min-height: 60px;
+    padding: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #152535;
+    border: 2px solid aqua;
+    border-radius: 5px;
+
     color: white;
-    border-radius: 8px;
-}
-
-.thoigian p {
-    margin: 8px 0;
-}
-
-#trangThaiCoChe {
-    color: #38d9f5;
+    font-size: 18px;
     font-weight: bold;
+    text-align: center;
+    line-height: 1.5;
 }
 
-#thoiGianHieuUng,
-#thoiGianDotTiep {
-    color: #ffd166;
-    font-size: 22px;
+#cheDoHienTai {
+    padding: 12px;
+    background-color: #134e4a;
+    border: 1px solid #2dd4bf;
+    border-radius: 5px;
+    color: #ccfbf1;
+    font-size: 17px;
     font-weight: bold;
+    text-align: center;
+    line-height: 1.5;
 }
