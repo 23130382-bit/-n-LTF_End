@@ -94,6 +94,7 @@ function veKhoi() {
     vitrikhoivuong((index) => {
         danhSachOVuong[index].classList.add('vat_the', mauHienTai);
     });
+    xuLyChamVatBay();
 }
 // mục đích của việc xóa là xóa vị trí hịnh tại của ô 1
 function xoaKhoi() {
@@ -125,10 +126,8 @@ function xoayKhoi() {
         let dichCot = danhSachDichCot[k];
         if (!kiemTraVaCham(0, dichCot, khoiMoi)) {
             xoaKhoi();
-
             khoiHienTai = khoiMoi;
             vitricot += dichCot;
-
             veKhoi();
             return;
         }
@@ -144,17 +143,46 @@ function rotxuong() {
         anhang();
         if (taoKhoiMoi()) {
             if (kiemTraVaCham(0, 0)) {
-                clearInterval(timerID);
-                timerID = null;
-                alert("Game Over! Điểm của bạn là: " + tongdiem);
-                nutBatDau.disabled = false;
-                nutKetThuc.disabled = true;
+                dungGame();
+                alert("Thất bại với số điểm: " + tongdiem);
                 return;
             }
             veKhoi();
         }
     }
 
+}
+function roiThangXuong() {
+    if (!dangChoi) return;
+
+    xoaKhoi();
+
+    // Thêm riêng cho level 4
+    if (levelHienTai === 4 && vatBay !== null) {
+        xoaKhoi();
+
+        while (!kiemTraVaCham(1, 0) && !kiemTraChamVatBay()) {
+            vitrihang++;
+        }
+
+        // Ghi nhận trước khi veKhoi() cố định và tạo khối mới
+        let chamThanhBay = kiemTraChamVatBay();
+
+        veKhoi();
+
+        if (!chamThanhBay) {
+            rotxuong();
+        }
+
+        return;
+    }
+
+
+    while (!kiemTraVaCham(1, 0)) {
+        vitrihang++;
+    }
+    veKhoi();
+    rotxuong();
 }
 function kiemTraVaCham(nhichHang, nhichCot, khoiKiemTra = khoiHienTai) {
     for (let i = 0; i < khoiKiemTra.length; i++) {
@@ -264,6 +292,10 @@ function dungGame() {
     timerID = null;
     timerXoay = null;
 
+    dungXoayTheoTG();
+
+    clearInterval(timerDoiKhoi);
+    timerDoiKhoi = null;
 }
 
 nutKetThuc.addEventListener('click', function () {
@@ -295,25 +327,12 @@ document.addEventListener('keydown', function (suKien) {
         case 'ArrowUp':
             xoayKhoi();
             break;
+        case ' ':
+            suKien.preventDefault();
+            if (suKien.repeat) return;
+            roiThangXuong();
+            break;
     }
-});
-//khai báo nút hướng dẫn
-const khungHuongDan = document.getElementById('khungHuongDan');
-const nutMoHuongDan = document.getElementById('nutMoHuongDan');
-const nutDongHuongDan = document.getElementById('nutDongHuongDan');
-//ifame trong trang hướng dẫn
-const iframe = khungHuongDan.querySelector('iframe');
-nutMoHuongDan.addEventListener('click', function () {
-    iframe.src = 'huongdan.html';
-    khungHuongDan.classList.add('hien_thi');
-});
-//xử lí nút
-nutMoHuongDan.addEventListener('click', function () {
-    khungHuongDan.classList.add('hien_thi');
-});
-
-nutDongHuongDan.addEventListener('click', function () {
-    khungHuongDan.classList.remove('hien_thi');
 });
 //lấy danh sách lv
 const danhSachNutLevel = document.querySelectorAll('.level');
@@ -325,9 +344,7 @@ function chonLevel(level) {
     dungGame();
     //cập nhật lại lv
     levelHienTai = level;
-    //hiện thị
-    iframe.src = 'huongdan.html#level' + level;
-    khungHuongDan.classList.add('hien_thi');
+    batDauGame();
 }
 
 
@@ -386,13 +403,14 @@ function xoaytheotg() {
     batDauXoay();
 }
 // logic lv 3
+let timerDoiKhoi = null;
+let chiSoKhoiHienTai = -1;
+let mauHienTai = '';
 function doiKhoiHienTai() {
     let indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
-
     while (indexNgauNhien === chiSoKhoiHienTai) {
         indexNgauNhien = Math.floor(Math.random() * DANH_SACH_KHOI.length);
     }
-
     let khoiMoi = DANH_SACH_KHOI[indexNgauNhien];
     if (kiemTraVaCham(0, 0, khoiMoi)) {
         return;
@@ -404,10 +422,8 @@ function doiKhoiHienTai() {
     veKhoi();
 }
 function doiKhoiTheoTG() {
-    let thoiGianDoi = 5000;
-
+    let thoiGianDoi = 1000;
     clearInterval(timerDoiKhoi);
-
     timerDoiKhoi = setInterval(function () {
         if (dangChoi && levelHienTai === 3) {
             doiKhoiHienTai();
@@ -415,7 +431,167 @@ function doiKhoiTheoTG() {
     }, thoiGianDoi);
 }
 // logic lv 4
+let timerSinhVatBay = null;
+let timerDiChuyenVatBay = null;
+let vatBay = null;
 
+// Chỉ có một vật thể: { hang, cot }
+// Thanh ngang dài 3 ô, bay từ trái sang phải.
+
+// Duyệt những ô của thanh đang nằm trong map
+function viTriVatBay(xuLy) {
+    if (vatBay === null) return;
+
+    for (let i = 0; i < 3; i++) {
+        let cot = vatBay.cot + i;
+
+        if (cot >= 0 && cot < soCot) {
+            let index = vatBay.hang * soCot + cot;
+            xuLy(index);
+        }
+    }
+}
+
+function veVatBay() {
+    viTriVatBay(function (index) {
+        danhSachOVuong[index].classList.add('vat_the_bay');
+    });
+}
+
+function xoaVatBay() {
+    viTriVatBay(function (index) {
+        danhSachOVuong[index].classList.remove('vat_the_bay');
+    });
+}
+function timHangBay() {
+    let hangCoDinh = soHang;
+
+    for (let hang = 0; hang < soHang; hang++) {
+        for (let cot = 0; cot < soCot; cot++) {
+            let index = hang * soCot + cot;
+
+            if (danhSachOVuong[index].classList.contains('da_co_dinh')) {
+                hangCoDinh = hang;
+                return hangCoDinh - 4;
+            }
+        }
+    }
+
+    // Chưa có khối cố định thì tính từ đáy
+    return hangCoDinh - 4;
+}
+function taoVatBay() {
+    if (!dangChoi || levelHienTai !== 4) return;
+    if (vatBay !== null) return;
+
+    let hangBay = timHangBay();
+
+    if (hangBay < 0 || hangBay >= soHang) return;
+
+    // Bắt đầu ngoài mép trái, sau đó lần lượt bay vào
+    vatBay = {
+        hang: hangBay,
+        cot: -3
+    };
+}
+function kiemTraChamVatBay() {
+    if (!dangChoi || levelHienTai !== 4 || vatBay === null) {
+        return false;
+    }
+
+    let daCham = false;
+
+    // Gọi lại hàm duyệt khối hiện tại của bạn
+    vitrikhoivuong(function (indexKhoi) {
+        let hangKhoi = Math.floor(indexKhoi / soCot);
+        let cotKhoi = indexKhoi % soCot;
+
+        viTriVatBay(function (indexBay) {
+            let hangBay = Math.floor(indexBay / soCot);
+            let cotBay = indexBay % soCot;
+
+            let khoangCach =
+                Math.abs(hangKhoi - hangBay) +
+                Math.abs(cotKhoi - cotBay);
+
+            if (khoangCach <= 1) {
+                daCham = true;
+            }
+        });
+    });
+
+    return daCham;
+}
+
+function xuLyChamVatBay() {
+    if (!kiemTraChamVatBay()) return;
+
+    // Bỏ hình ảnh đang bay
+    xoaVatBay();
+
+    // Cố định khối đang rơi bằng hàm cũ
+    codinhkhoi();
+
+    // Cố định những ô của thanh đang nằm trong map
+    viTriVatBay(function (index) {
+        let oVuong = danhSachOVuong[index];
+
+        // Ô đã cố định thì giữ nguyên màu
+        if (!oVuong.classList.contains('da_co_dinh')) {
+            oVuong.classList.add('da_co_dinh', 'mau_xanh_nhat');
+        }
+    });
+
+    // Xóa trạng thái bay trước khi tạo khối tiếp theo
+    vatBay = null;
+
+    anhang();
+
+    if (taoKhoiMoi()) {
+        if (kiemTraVaCham(0, 0)) {
+            dungGame();
+            alert("Thất bại với số điểm: " + tongdiem);
+            return;
+        }
+
+        veKhoi();
+    }
+}
+
+function diChuyenVatBay() {
+    if (!dangChoi || levelHienTai !== 4 || vatBay === null) {
+        return;
+    }
+    xoaVatBay();
+    // Di chuyển sang phải một ô
+    vatBay.cot++;
+    // Cả thanh đã bay ra ngoài
+    if (vatBay.cot >= soCot) {
+        vatBay = null;
+        return;
+    }
+    veVatBay();
+    xuLyChamVatBay();
+}
+
+function dungVatBay() {
+    clearInterval(timerSinhVatBay);
+    clearInterval(timerDiChuyenVatBay);
+    timerSinhVatBay = null;
+    timerDiChuyenVatBay = null;
+    xoaVatBay();
+    vatBay = null;
+}
+
+function batDauVatBay() {
+    dungVatBay();
+
+    // Sau mỗi 5 giây sinh một thanh
+    timerSinhVatBay = setInterval(taoVatBay, 5000);
+
+    // Mỗi 200ms thanh đi sang phải một ô
+    timerDiChuyenVatBay = setInterval(diChuyenVatBay, 200);
+}
 // logic lv 5 
 
 // logic lv 6
@@ -431,10 +607,8 @@ function apDungCoCheLevel() {
     clearInterval(timerDoiKhoi);
     timerDoiKhoi = null;
     switch (levelHienTai) {
-
         case 1:
             break;
-
         case 2:
             xoaytheotg();
             break;
@@ -443,6 +617,7 @@ function apDungCoCheLevel() {
             break;
 
         case 4:
+            batDauVatBay();
             break;
 
         case 5:
