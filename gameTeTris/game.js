@@ -11,8 +11,9 @@ for (let i = 0; i < soHang; i++) {
         manHinhChinh.appendChild(oVuong);
     }
 }
-
 const danhSachOVuong = Array.from(document.querySelectorAll('.o_vuong'));
+
+
 //tạo một danh sách chứa các vật thể
 const DANH_SACH_KHOI = [
     // khối t
@@ -52,6 +53,7 @@ const DANH_SACH_KHOI = [
         [1, 1, 0]
     ]
 ];
+//danh sách màu
 const DANH_SACH_MAU = [
     'mau_tim',
     'mau_xanh_nhat',
@@ -61,6 +63,9 @@ const DANH_SACH_MAU = [
     'mau_xanh_la',
     'mau_do'
 ];
+
+
+// lấy randum 1 số với đó nhỏ hơn độ dài của mảng lớn ,để lấy ra một mảng con là khối cần tạo
 let khoiHienTai = [];
 let vitrihang = 0;
 let vitricot = 3;
@@ -76,6 +81,10 @@ function taoKhoiMoi() {
     vitricot = Math.floor((soCot - khoiHienTai[0].length) / 2); //chia khoảng cách , căn đều hai bên.
     return true;
 }
+
+/// đọc vị trí mà khối sẽ đc tạo ở trong map
+
+
 function vitrikhoivuong(tuongtac) {
     //chạy vòng lặp trong khối
     for (let i = 0; i < khoiHienTai.length; i++) {
@@ -109,6 +118,9 @@ function codinhkhoi() {
         danhSachOVuong[index].classList.add('da_co_dinh');
     });
 }
+
+// xoay khối áp dụng công thức xoay của ma trận 
+// xét một số trường hợp đặc biệt cần phải di dời một số vị trí để xoay đc như ý muốn
 function xoayKhoi() {
     let khoiMoi = [];
     let soHangKhoi = khoiHienTai.length;
@@ -133,6 +145,11 @@ function xoayKhoi() {
         }
     }
 }
+
+//đã có các hàm có sẳn, áp dụng hình thức gọi lại hàm 
+//kiểm tra va chạm để xem có thể tiếp tục tạo khối 
+// cơ chế rơi xuống là xóa --> tạo --> xóa -->> tạo với vị trí mới
+
 function rotxuong() {
     if (!kiemTraVaCham(1, 0)) {
         xoaKhoi();
@@ -152,6 +169,7 @@ function rotxuong() {
     }
 
 }
+// tạo cho người chơi thêm cách thức chơi   
 function roiThangXuong() {
     if (!dangChoi) return;
 
@@ -183,6 +201,8 @@ function roiThangXuong() {
     veKhoi();
     rotxuong();
 }
+
+// kiểm tra chạm 2 bên , chạm vật thể cố định , chạm đáy
 function kiemTraVaCham(nhichHang, nhichCot, khoiKiemTra = khoiHienTai) {
     for (let i = 0; i < khoiKiemTra.length; i++) {
         for (let j = 0; j < khoiKiemTra[i].length; j++) {
@@ -244,6 +264,7 @@ function anhang() {
         }
     }
 }
+//tạo lại map
 function resetMap() {
     danhSachOVuong.forEach(oVuong => {
         oVuong.className = 'o_vuong';
@@ -258,23 +279,18 @@ const nutKetThuc = document.getElementById('nutKetThuc');
 let levelHienTai = 1;
 let dangChoi = false;
 function batDauGame() {
-    //load lại map
+    // Dừng hết timer của lượt trước
+    dungGame();
     resetMap();
-    //bắt đầu tạo khối
+
     if (taoKhoiMoi()) {
         veKhoi();
     }
-    //xóa tg cũ
-    if (timerID !== null) {
-        clearInterval(timerID);
-    }
-    //chuyển trang thái
-    dangChoi = true;
-    timerID = setInterval(rotxuong, 500);
-    //đóng nút bắt đầu và hiện nút kết thúc
+
     nutBatDau.disabled = true;
     nutKetThuc.disabled = false;
-    // áp dụng lv
+
+    // Hàm thông báo sẽ chờ 3 giây rồi mới chạy game
     apDungCoCheLevel();
 }
 nutBatDau.addEventListener('click', function () {
@@ -282,20 +298,27 @@ nutBatDau.addEventListener('click', function () {
 });
 
 function dungGame() {
-    // cập nhật
     dangChoi = false;
+
+    clearInterval(timerID);
+    timerID = null;
+
+    clearInterval(timerThongBao);
+    timerThongBao = null;
+
     clearInterval(timerDoiKhoi);
     timerDoiKhoi = null;
-    clearInterval(timerThongBao);
-    document.getElementById('thongBaoLevel').textContent = 'Đã ngừng chơi';
-    dungVatBay();
+
     dungXoayTheoTG();
+    dungVatBay();
+
+    document.getElementById('thongBaoBatDau').style.display = 'none';
+
+    document.getElementById('thongBaoLevel').textContent =
+        'Đã ngừng chơi';
+
     nutBatDau.disabled = false;
     nutKetThuc.disabled = true;
-    clearInterval(timerID);
-    clearInterval(timerXoay);
-    timerID = null;
-    timerXoay = null;
 }
 
 nutKetThuc.addEventListener('click', function () {
@@ -342,8 +365,10 @@ function chonLevel(level) {
     if (level < 1 || level > 7) return;
     //kết thuc game ngay
     dungGame();
+    resetMap();
     //cập nhật lại lv
     levelHienTai = level;
+    apDungCoCheLevel();
     batDauGame();
 }
 
@@ -356,6 +381,11 @@ danhSachNutLevel.forEach(function (nut) {
 
 
 // logic lv 2
+// vật thể sẽ tự động xoay trong qua trình rơi
+// đầu tiên thiết lập cho nó tự động xoay
+// vì qua trình xoay liên túc gây khó chịu, cần có thời gian xoay và ngừng  
+// xét tốc độ xoay để người chơi kịp phản ứng 
+
 let timerXoay = null;  //thoi gian khối xoay
 let timerChuKy = null; //bao nhiêu lần xoay trong 1 khoang thoi gian
 let trangThaiXoay = false; // trang thái 
@@ -403,6 +433,10 @@ function xoaytheotg() {
     batDauXoay();
 }
 // logic lv 3
+// vật thể thay đổi trong quá trình rơi
+// đầu tiên thay đổi khối hiện tại bằng khổi mới 
+// một số trường hợp vì khồi không thể hay đổi vì map không đủ khoảng trống , chọn hình thức bỏ qua , khối cũ sẽ ko bị thay
+// thiết lập thêm thời gian để người chơi kịp phản ứng
 let timerDoiKhoi = null;
 let chiSoKhoiHienTai = -1;
 let mauHienTai = '';
@@ -435,7 +469,7 @@ let timerSinhVatBay = null;
 let timerDiChuyenVatBay = null;
 let vatBay = null;
 
-function viTriVatBay(xuLy) {
+function duyetOVatBay(xuLy) {
     if (vatBay === null) return;
 
     for (let i = 0; i < 3; i++) {
@@ -449,33 +483,31 @@ function viTriVatBay(xuLy) {
 }
 
 function veVatBay() {
-    viTriVatBay(function (index) {
+    duyetOVatBay(function (index) {
         danhSachOVuong[index].classList.add('vat_the_bay');
     });
 }
 
 function xoaVatBay() {
-    viTriVatBay(function (index) {
+    duyetOVatBay(function (index) {
         danhSachOVuong[index].classList.remove('vat_the_bay');
     });
 }
-function timHangBay() {
-    let hangCoDinh = soHang;
 
+function timHangBay() {
     for (let hang = 0; hang < soHang; hang++) {
         for (let cot = 0; cot < soCot; cot++) {
             let index = hang * soCot + cot;
 
             if (danhSachOVuong[index].classList.contains('da_co_dinh')) {
-                hangCoDinh = hang;
-                return hangCoDinh - 4;
+                return hang - 4;
             }
         }
     }
 
-    // Chưa có khối cố định thì tính từ đáy
-    return hangCoDinh - 4;
+    return soHang - 4;
 }
+
 function taoVatBay() {
     if (!dangChoi || levelHienTai !== 4) return;
     if (vatBay !== null) return;
@@ -484,12 +516,12 @@ function taoVatBay() {
 
     if (hangBay < 0 || hangBay >= soHang) return;
 
-    // Bắt đầu ngoài mép trái, sau đó lần lượt bay vào
     vatBay = {
         hang: hangBay,
         cot: -3
     };
 }
+
 function kiemTraChamVatBay() {
     if (!dangChoi || levelHienTai !== 4 || vatBay === null) {
         return false;
@@ -497,12 +529,11 @@ function kiemTraChamVatBay() {
 
     let daCham = false;
 
-    // Gọi lại hàm duyệt khối hiện tại của bạn
     vitrikhoivuong(function (indexKhoi) {
         let hangKhoi = Math.floor(indexKhoi / soCot);
         let cotKhoi = indexKhoi % soCot;
 
-        viTriVatBay(function (indexBay) {
+        duyetOVatBay(function (indexBay) {
             let hangBay = Math.floor(indexBay / soCot);
             let cotBay = indexBay % soCot;
 
@@ -522,23 +553,17 @@ function kiemTraChamVatBay() {
 function xuLyChamVatBay() {
     if (!kiemTraChamVatBay()) return;
 
-    // Bỏ hình ảnh đang bay
     xoaVatBay();
-
-    // Cố định khối đang rơi bằng hàm cũ
     codinhkhoi();
 
-    // Cố định những ô của thanh đang nằm trong map
-    viTriVatBay(function (index) {
+    duyetOVatBay(function (index) {
         let oVuong = danhSachOVuong[index];
 
-        // Ô đã cố định thì giữ nguyên màu
         if (!oVuong.classList.contains('da_co_dinh')) {
             oVuong.classList.add('da_co_dinh', 'mau_xanh_nhat');
         }
     });
 
-    // Xóa trạng thái bay trước khi tạo khối tiếp theo
     vatBay = null;
 
     anhang();
@@ -546,7 +571,7 @@ function xuLyChamVatBay() {
     if (taoKhoiMoi()) {
         if (kiemTraVaCham(0, 0)) {
             dungGame();
-            alert("Thất bại với số điểm: " + tongdiem);
+            alert('Thất bại với số điểm: ' + tongdiem);
             return;
         }
 
@@ -558,14 +583,16 @@ function diChuyenVatBay() {
     if (!dangChoi || levelHienTai !== 4 || vatBay === null) {
         return;
     }
+
     xoaVatBay();
-    // Di chuyển sang phải một ô
-    vatBay.cot++;
-    // Cả thanh đã bay ra ngoài
+
+    vatBay.cot = vatBay.cot + 1;
+
     if (vatBay.cot >= soCot) {
         vatBay = null;
         return;
     }
+
     veVatBay();
     xuLyChamVatBay();
 }
@@ -573,8 +600,10 @@ function diChuyenVatBay() {
 function dungVatBay() {
     clearInterval(timerSinhVatBay);
     clearInterval(timerDiChuyenVatBay);
+
     timerSinhVatBay = null;
     timerDiChuyenVatBay = null;
+
     xoaVatBay();
     vatBay = null;
 }
@@ -582,10 +611,7 @@ function dungVatBay() {
 function batDauVatBay() {
     dungVatBay();
 
-    // Sau mỗi 5 giây sinh một thanh
     timerSinhVatBay = setInterval(taoVatBay, 5000);
-
-    // Mỗi 200ms thanh đi sang phải một ô
     timerDiChuyenVatBay = setInterval(diChuyenVatBay, 200);
 }
 // logic lv 5 
@@ -598,52 +624,38 @@ function batDauVatBay() {
 
 // chuyển cấp độ 
 function apDungCoCheLevel() {
+    thongBaoLevel(levelHienTai);
+    //kết thúc hàm xoay theo thời gian 
     dungXoayTheoTG();
-
     clearInterval(timerDoiKhoi);
     timerDoiKhoi = null;
-
     dungVatBay();
-
-    const cheDo = document.getElementById('cheDoHienTai');
 
     switch (levelHienTai) {
         case 1:
-            cheDo.textContent = 'Level 1: Chế độ bình thường';
-            thongBaoLevel(1);
+            thongBaoLevel(1)
             break;
-
         case 2:
-            cheDo.textContent = 'Level 2: Chế độ tự động xoay';
-            thongBaoLevel(2);
+            thongBaoLevel(2)
             xoaytheotg();
             break;
-
         case 3:
-            cheDo.textContent = 'Level 3: Chế độ đổi hình khối';
-            thongBaoLevel(3);
+            thongBaoLevel(3)
             doiKhoiTheoTG();
             break;
 
         case 4:
-            cheDo.textContent = 'Level 4: Chế độ vật thể bay ngang';
-            thongBaoLevel(4);
+            thongBaoLevel(4)
             batDauVatBay();
             break;
 
         case 5:
-            cheDo.textContent = 'Level 5: Chưa có cơ chế riêng';
-            thongBaoLevel(5);
             break;
 
         case 6:
-            cheDo.textContent = 'Level 6: Chưa có cơ chế riêng';
-            thongBaoLevel(6);
             break;
 
         case 7:
-            cheDo.textContent = 'Level 7: Chưa có cơ chế riêng';
-            thongBaoLevel(7);
             break;
     }
 }
@@ -653,36 +665,51 @@ function thongBaoLevel(level) {
     clearInterval(timerThongBao);
 
     const thongBao = document.getElementById('thongBaoLevel');
+    const manThongBao = document.getElementById('thongBaoBatDau');
+    const tenCheDo = document.getElementById('tenCheDo');
+    const demNguoc = document.getElementById('demNguocBatDau');
 
     let dangXoay = true;
+    let dangCho = true;
+    let giayCho = 3;
     let giay;
 
-    // Thời gian ban đầu của từng level
     switch (level) {
         case 1:
-            thongBao.textContent = 'Level 1: Bình thường';
-            return;
+            tenCheDo.textContent = 'Level 1: Bình thường';
+            break;
 
         case 2:
+            tenCheDo.textContent = 'Level 2: Tự động xoay';
             giay = 7;
             break;
 
         case 3:
+            tenCheDo.textContent = 'Level 3: Đổi hình khối';
             giay = 3;
             break;
 
         case 4:
+            tenCheDo.textContent = 'Level 4: Vật thể bay ngang';
             giay = 5;
             break;
 
         default:
-            thongBao.textContent = 'Level ' + level;
-            return;
+            tenCheDo.textContent = 'Level ' + level;
+            break;
     }
 
-    // Hiện nội dung thông báo
+    // Hiện màn thông báo trước khi chơi
+    manThongBao.style.display = 'flex';
+    demNguoc.textContent = 'Bắt đầu sau ' + giayCho + ' giây';
+    thongBao.textContent = 'Đang chuẩn bị...';
+
     function hienThongBao() {
         switch (level) {
+            case 1:
+                thongBao.textContent = 'Level 1: Bình thường';
+                break;
+
             case 2:
                 if (dangXoay === true) {
                     thongBao.textContent = 'Đang xoay: ' + giay + ' giây';
@@ -698,13 +725,56 @@ function thongBaoLevel(level) {
             case 4:
                 thongBao.textContent = 'Sinh vật thể sau: ' + giay + ' giây';
                 break;
+
+            default:
+                thongBao.textContent = 'Level ' + level;
+                break;
         }
     }
 
-    hienThongBao();
-
-    // Mỗi giây giảm thời gian một lần
     timerThongBao = setInterval(function () {
+        // Giai đoạn chờ trước khi bắt đầu
+        if (dangCho === true) {
+            giayCho = giayCho - 1;
+
+            demNguoc.textContent =
+                'Bắt đầu sau ' + giayCho + ' giây';
+
+            if (giayCho === 0) {
+                dangCho = false;
+                manThongBao.style.display = 'none';
+
+                // Hết thời gian chờ mới bắt đầu game
+                dangChoi = true;
+                timerID = setInterval(rotxuong, 500);
+
+                switch (level) {
+                    case 2:
+                        xoaytheotg();
+                        break;
+
+                    case 3:
+                        doiKhoiTheoTG();
+                        break;
+
+                    case 4:
+                        batDauVatBay();
+                        break;
+                }
+
+                hienThongBao();
+
+                // Các level này không cần đồng hồ đếm tiếp
+                if (level < 2 || level > 4) {
+                    clearInterval(timerThongBao);
+                    timerThongBao = null;
+                }
+            }
+
+            return;
+        }
+
+        // Giai đoạn đang chơi
         giay = giay - 1;
 
         if (giay === 0) {
